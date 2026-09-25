@@ -968,6 +968,80 @@
             grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
+        .capability-gallery {
+            display: grid;
+            gap: 14px;
+            grid-template-columns: 1.18fr 0.82fr 0.82fr;
+        }
+
+        .capability-gallery figure {
+            background: var(--deep);
+            box-shadow: 0 18px 42px rgba(6, 23, 34, 0.10);
+            margin: 0;
+            min-height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .capability-gallery figure:first-child {
+            grid-row: span 2;
+            min-height: 454px;
+        }
+
+        .capability-gallery img {
+            display: block;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            width: 100%;
+        }
+
+        .capability-gallery figure:first-child img {
+            object-position: center;
+        }
+
+        .capability-gallery figcaption {
+            background: linear-gradient(180deg, transparent 12%, rgba(5, 22, 50, 0.88));
+            bottom: 0;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 800;
+            left: 0;
+            letter-spacing: 0.08em;
+            padding: 54px 18px 16px;
+            position: absolute;
+            right: 0;
+            text-transform: uppercase;
+        }
+
+        .capability-gallery figure:hover img {
+            transform: scale(1.035);
+        }
+
+        .capability-gallery-note {
+            align-items: end;
+            background: linear-gradient(145deg, var(--ink), var(--deep));
+            color: #fff;
+            display: flex;
+            min-height: 220px;
+            padding: 24px;
+        }
+
+        .capability-gallery-note p {
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 15px;
+            margin: 0;
+        }
+
+        .capability-gallery-note strong {
+            color: var(--champagne);
+            display: block;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
         .capability-card {
             background: var(--surface);
             border: 1px solid rgba(6, 23, 34, 0.08);
@@ -2664,6 +2738,7 @@
             .compliance-carousel-head,
             .page-hero-grid,
             .site-capability-main,
+            .capability-gallery,
             .capability-card-grid,
             .current-studies,
             .patient-experience,
@@ -2703,6 +2778,16 @@
             .capability-strip {
                 grid-template-columns: 40px minmax(0, 1fr) 40px;
                 margin-top: 24px;
+            }
+
+            .capability-gallery figure,
+            .capability-gallery figure:first-child,
+            .capability-gallery-note {
+                min-height: 300px;
+            }
+
+            .capability-gallery figure:first-child {
+                grid-row: auto;
             }
 
             .capability-pill {
@@ -2995,6 +3080,39 @@
                         </div>
                     </div>
                 </article>
+                <div class="capability-gallery" aria-label="Medisana Research Center care environments">
+                    <figure>
+                        <img src="{{ asset('images/medisana/capability-reception.png') }}" alt="Medisana Health Center reception and research center welcome desk" width="1536" height="1024" loading="eager">
+                        <figcaption>Welcoming patient access</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="{{ asset('images/medisana/capability-examination-room.png') }}" alt="Private Medisana clinical examination room" width="1024" height="1536" loading="lazy">
+                        <figcaption>Clinical examination</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="{{ asset('images/medisana/capability-clinical-conference-room.png') }}" alt="Medisana Research Center clinical conference room" width="1536" height="1024" loading="lazy">
+                        <figcaption>Study team coordination</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="{{ asset('images/medisana/capability-infusion-suite.png') }}" alt="Medisana infusion suite with private treatment chairs" width="1024" height="1536" loading="lazy">
+                        <figcaption>Infusion suite</figcaption>
+                    </figure>
+                    <div class="capability-gallery-note">
+                        <p><strong>At the Miami Springs site</strong>Purposeful clinical spaces support a composed, participant-centered visit from arrival through protocol-directed care.</p>
+                    </div>
+                    <figure>
+                        <img src="{{ asset('images/medisana/capability-brainwave-eeg-suite.png') }}" alt="Medisana BrainWave EEG assessment suite" width="1024" height="1536" loading="lazy">
+                        <figcaption>CNS assessment suite</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="{{ asset('images/medisana/capability-ultrasound-diagnostics.png') }}" alt="Medisana diagnostic ultrasound equipment in a private clinical room" width="1024" height="1536" loading="lazy">
+                        <figcaption>Ultrasound diagnostics</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="{{ asset('images/medisana/capability-ultrasound-suite.png') }}" alt="Medisana ultrasound suite prepared for a clinical visit" width="1024" height="1536" loading="lazy">
+                        <figcaption>Prepared for protocol visits</figcaption>
+                    </figure>
+                </div>
                 <div class="capability-card-grid" aria-label="Expandable site capability areas">
                     <details class="capability-card" data-capability-detail>
                         <summary>
@@ -3651,10 +3769,10 @@
                         <strong>Flagler</strong>
                         <span>11200 West Flagler Street</span>
                     </a>
-                    <div class="map-pin homestead">
+                    <a class="map-pin homestead" href="https://www.google.com/maps/search/?api=1&query=33550%20South%20Dixie%20Highway%2C%20Suite%20122-130%2C%20Homestead%2C%20FL" target="_blank" rel="noopener">
                         <strong>Homestead</strong>
-                        <span>Clinic access point</span>
-                    </div>
+                        <span>33550 South Dixie Highway, Suite 122-130</span>
+                    </a>
                 </div>
             </div>
         </section>
