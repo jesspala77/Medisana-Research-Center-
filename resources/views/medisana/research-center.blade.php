@@ -6,14 +6,13 @@
     $medisanaRoute = $isStandaloneDomain ? 'medisana.standalone' : 'medisana.research-center';
     $medisanaUrl = fn (?string $pageName = null, ?string $fragment = null): string => route($medisanaRoute, $pageName ? ['page' => $pageName] : []) . ($fragment ? "#{$fragment}" : '');
     $synnexusPortalUrl = config('medisana.portal_url');
-    // Add a photograph at any of these paths to replace its editorial fallback.
     $capabilityImages = [
-        'clinic-network' => ['path' => 'images/medisana/capabilities/clinic-network.webp', 'alt' => 'Welcoming clinical reception and patient access area'],
-        'investigator-leadership' => ['path' => 'images/medisana/capabilities/investigator-leadership.webp', 'alt' => 'Investigator reviewing a research plan with a clinical colleague'],
-        'patient-support' => ['path' => 'images/medisana/capabilities/patient-support.webp', 'alt' => 'Care coordinator speaking with a research participant'],
-        'cns-qualified-raters' => ['path' => 'images/medisana/capabilities/cns-qualified-raters.webp', 'alt' => 'Clinician conducting a structured CNS assessment'],
-        'diagnostics-dispensing' => ['path' => 'images/medisana/capabilities/diagnostics-dispensing.webp', 'alt' => 'Clinical diagnostics equipment in a treatment room'],
-        'operational-backbone' => ['path' => 'images/medisana/capabilities/operational-backbone.webp', 'alt' => 'Research operations team reviewing study documentation'],
+        'clinic-network' => ['path' => 'images/medisana/capabilities/clinic-network.jpeg', 'alt' => 'Exterior of Medisana Health Center showing the accessible clinic entrance', 'position' => 'center 49%'],
+        'investigator-leadership' => ['path' => 'images/medisana/capabilities/investigator-leadership.jpeg', 'alt' => 'Medisana clinical workspace supporting investigator leadership', 'position' => 'center 57%'],
+        'patient-support' => ['path' => 'images/medisana/capabilities/patient-support.jpeg', 'alt' => 'Medisana staff support area for participant comfort and coordination', 'position' => 'center 58%'],
+        'cns-qualified-raters' => ['path' => 'images/medisana/capabilities/cns-qualified-raters.jpeg', 'alt' => 'Medisana clinical corridor supporting CNS and qualified rater workflows', 'position' => 'center 54%'],
+        'diagnostics-dispensing' => ['path' => 'images/medisana/capabilities/diagnostics-dispensing.jpeg', 'alt' => 'Clinical diagnostic equipment at Medisana Health Center', 'position' => 'left 56%'],
+        'operational-backbone' => ['path' => 'images/medisana/capabilities/operational-backbone.jpeg', 'alt' => 'Medisana operations office with clinical workflow stations', 'position' => 'center 56%'],
     ];
     $pageHeaders = [
         'patients' => [
@@ -1133,6 +1132,108 @@
         .capability-card-body ul {
             margin: 0;
             padding-left: 20px;
+        }
+
+        .capability-carousel {
+            border: 1px solid rgba(7, 31, 74, 0.12);
+            box-shadow: var(--premium-shadow);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .capability-carousel-viewport {
+            overflow: hidden;
+        }
+
+        .capability-carousel-track {
+            display: flex;
+            transition: transform 520ms cubic-bezier(.22, .61, .36, 1);
+        }
+
+        .capability-slide {
+            background: var(--surface);
+            display: grid;
+            flex: 0 0 100%;
+            grid-template-columns: minmax(0, 1.48fr) minmax(280px, .72fr);
+            min-width: 0;
+        }
+
+        .capability-slide-media {
+            aspect-ratio: 16 / 9;
+            background: var(--ink);
+            display: block;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .capability-slide-media img {
+            display: block;
+            height: 100%;
+            object-fit: cover;
+            object-position: var(--focal-position, center);
+            width: 100%;
+        }
+
+        .capability-slide-media::after {
+            background: linear-gradient(90deg, transparent 52%, rgba(7, 31, 74, .2)), linear-gradient(180deg, transparent 54%, rgba(7, 31, 74, .32));
+            content: "";
+            inset: 0;
+            pointer-events: none;
+            position: absolute;
+        }
+
+        .capability-slide-copy {
+            align-content: center;
+            background: linear-gradient(145deg, #fff 0%, #f4f7fb 100%);
+            border-left: 1px solid rgba(7, 31, 74, .1);
+            display: grid;
+            padding: clamp(26px, 4vw, 56px);
+        }
+
+        .capability-slide-copy .eyebrow { margin: 0 0 11px; }
+        .capability-slide-copy h3 { color: var(--ink); font-size: clamp(25px, 2.3vw, 34px); line-height: 1.08; margin: 0; }
+        .capability-slide-copy ul { color: var(--muted); font-size: 15px; line-height: 1.5; margin: 17px 0 0; padding-left: 19px; }
+        .capability-slide-copy li + li { margin-top: 6px; }
+
+        .capability-carousel-controls {
+            align-items: center;
+            background: rgba(7, 31, 74, .98);
+            display: flex;
+            gap: 14px;
+            justify-content: space-between;
+            padding: 14px 18px;
+        }
+
+        .capability-carousel-buttons { display: flex; gap: 8px; }
+        .capability-carousel-button {
+            align-items: center;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, .34);
+            border-radius: 50%;
+            color: #fff;
+            cursor: pointer;
+            display: inline-flex;
+            font-size: 22px;
+            height: 38px;
+            justify-content: center;
+            line-height: 1;
+            transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+            width: 38px;
+        }
+        .capability-carousel-button:hover { background: var(--red); border-color: var(--red); transform: translateY(-1px); }
+        .capability-carousel-button:focus-visible, .capability-carousel-dot:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+        .capability-carousel-dots { display: flex; gap: 7px; }
+        .capability-carousel-dot { background: rgba(255, 255, 255, .36); border: 0; border-radius: 999px; cursor: pointer; height: 5px; padding: 0; transition: background 180ms ease, width 180ms ease; width: 5px; }
+        .capability-carousel-dot[aria-current="true"] { background: #fff; width: 23px; }
+
+        @media (max-width: 720px) {
+            .capability-slide { grid-template-columns: 1fr; }
+            .capability-slide-copy { border-left: 0; border-top: 1px solid rgba(7, 31, 74, .1); padding: 28px 24px 32px; }
+            .capability-slide-media { aspect-ratio: 16 / 10; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .capability-carousel-track { transition: none; }
         }
 
         .current-studies {
@@ -3075,7 +3176,47 @@
                         </div>
                     </div>
                 </article>
-                <div class="capability-card-grid" aria-label="Expandable site capability areas">
+                <div class="capability-carousel" data-capability-carousel role="region" aria-roledescription="carousel" aria-label="Medisana site capability images">
+                    <div class="capability-carousel-viewport">
+                        <div class="capability-carousel-track" data-capability-track>
+                            @php
+                                $capabilitySlides = [
+                                    ['key' => 'clinic-network', 'eyebrow' => 'Patient access', 'title' => 'Clinic Network', 'items' => ['Miami Springs, Flagler, and Homestead patient access', 'Care-team coordination across established clinic locations', 'Community relationships that support study awareness and follow-up']],
+                                    ['key' => 'investigator-leadership', 'eyebrow' => 'Oversight', 'title' => 'Investigator Leadership', 'items' => ['Pastor Torres, MD: Internal Medicine, General Surgery, Cosmetic Surgery', 'Vladimir A. Guevara Vazquez, MD: Psychiatry and Psychoanalysis', 'Jose Morales, MD: Psychiatry and CNS support', 'Protocol review, delegation, safety awareness, and approved study conduct']],
+                                    ['key' => 'patient-support', 'eyebrow' => 'Study support', 'title' => 'Patient Support', 'items' => ['Transportation coordination when appropriate and study-allowed', 'HHA-supported services when available and approved', 'Visit reminders, navigation, and retention support']],
+                                    ['key' => 'cns-qualified-raters', 'eyebrow' => 'CNS readiness', 'title' => 'CNS & Qualified Raters', 'items' => ['Psychiatry investigator bench for CNS-focused sponsor review', 'Qualified raters for sponsor-approved scales and investigator delegation', 'Brainwave / EEG assessment capability subject to protocol requirements']],
+                                    ['key' => 'diagnostics-dispensing', 'eyebrow' => 'Infrastructure', 'title' => 'Diagnostics & Dispensing', 'items' => ['Ultrasound and EKG diagnostics', 'Onsite pharmacy dispensing capability', 'Temperature-controlled NIST-certified monitoring']],
+                                    ['key' => 'operational-backbone', 'eyebrow' => 'Backbone', 'title' => 'Operational Backbone', 'items' => ['Secure prescreening and protected study workflows', 'Feasibility packets, startup tasks, regulatory files, and budget action items', 'Operational visibility for sponsors, CROs, investigators, and the site team']],
+                                ];
+                            @endphp
+                            @foreach ($capabilitySlides as $index => $slide)
+                                @php($image = $capabilityImages[$slide['key']])
+                                <article class="capability-slide" data-capability-slide aria-roledescription="slide" aria-label="{{ $index + 1 }} of {{ count($capabilitySlides) }}: {{ $slide['title'] }}" aria-hidden="{{ $index === 0 ? 'false' : 'true' }}">
+                                    <div class="capability-slide-media" style="--focal-position: {{ $image['position'] }};">
+                                        <img src="{{ asset($image['path']) }}" alt="{{ $image['alt'] }}" loading="{{ $index === 0 ? 'eager' : 'lazy' }}" decoding="async" width="1600" height="900">
+                                    </div>
+                                    <div class="capability-slide-copy">
+                                        <p class="eyebrow">{{ $slide['eyebrow'] }}</p>
+                                        <h3>{{ $slide['title'] }}</h3>
+                                        <ul>
+                                            @foreach ($slide['items'] as $item)
+                                                <li>{{ $item }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </article>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="capability-carousel-controls">
+                        <div class="capability-carousel-buttons">
+                            <button class="capability-carousel-button" type="button" data-capability-prev aria-label="Previous capability">‹</button>
+                            <button class="capability-carousel-button" type="button" data-capability-next aria-label="Next capability">›</button>
+                        </div>
+                        <div class="capability-carousel-dots" data-capability-dots aria-label="Choose a site capability"></div>
+                    </div>
+                </div>
+                <div class="capability-card-grid" hidden>
                     <details class="capability-card" data-capability-detail>
                         <summary>
                             <span class="capability-card-media">
@@ -3858,40 +3999,54 @@
                 });
             }
 
-            const capabilityDetails = Array.from(document.querySelectorAll('[data-capability-detail]'));
-            const openCapabilityById = (id) => {
-                if (!id) {
-                    return;
-                }
+            document.querySelectorAll('[data-capability-carousel]').forEach((carousel) => {
+                const track = carousel.querySelector('[data-capability-track]');
+                const slides = Array.from(carousel.querySelectorAll('[data-capability-slide]'));
+                const dots = carousel.querySelector('[data-capability-dots]');
+                const previous = carousel.querySelector('[data-capability-prev]');
+                const next = carousel.querySelector('[data-capability-next]');
+                const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+                let activeIndex = 0;
+                let intervalId = null;
 
-                const target = document.getElementById(id);
+                if (!track || slides.length < 2) return;
 
-                if (!target || !target.matches('[data-capability-detail]')) {
-                    return;
-                }
-
-                capabilityDetails.forEach((detail) => {
-                    detail.open = detail === target;
-                });
-            };
-
-            capabilityDetails.forEach((detail) => {
-                detail.addEventListener('toggle', () => {
-                    if (!detail.open) {
-                        return;
+                const stop = () => {
+                    if (intervalId !== null) {
+                        window.clearInterval(intervalId);
+                        intervalId = null;
                     }
+                };
 
-                    capabilityDetails.forEach((otherDetail) => {
-                        if (otherDetail !== detail) {
-                            otherDetail.open = false;
-                        }
-                    });
+                const start = () => {
+                    stop();
+                    if (!reduceMotion.matches) intervalId = window.setInterval(() => goTo(activeIndex + 1), 6500);
+                };
+
+                const goTo = (index) => {
+                    activeIndex = (index + slides.length) % slides.length;
+                    track.style.transform = `translateX(-${activeIndex * 100}%)`;
+                    slides.forEach((slide, slideIndex) => slide.setAttribute('aria-hidden', slideIndex === activeIndex ? 'false' : 'true'));
+                    dots?.querySelectorAll('button').forEach((dot, dotIndex) => dot.setAttribute('aria-current', dotIndex === activeIndex ? 'true' : 'false'));
+                };
+
+                slides.forEach((slide, index) => {
+                    const dot = document.createElement('button');
+                    dot.className = 'capability-carousel-dot';
+                    dot.type = 'button';
+                    dot.setAttribute('aria-label', `Show ${slide.querySelector('h3')?.textContent || 'capability'}`);
+                    dot.addEventListener('click', () => { goTo(index); start(); });
+                    dots?.appendChild(dot);
                 });
-            });
-
-            openCapabilityById(decodeURIComponent(window.location.hash.slice(1)));
-            window.addEventListener('hashchange', () => {
-                openCapabilityById(decodeURIComponent(window.location.hash.slice(1)));
+                previous?.addEventListener('click', () => { goTo(activeIndex - 1); start(); });
+                next?.addEventListener('click', () => { goTo(activeIndex + 1); start(); });
+                carousel.addEventListener('mouseenter', stop);
+                carousel.addEventListener('mouseleave', start);
+                carousel.addEventListener('focusin', stop);
+                carousel.addEventListener('focusout', start);
+                reduceMotion.addEventListener?.('change', start);
+                goTo(0);
+                start();
             });
 
             document.querySelectorAll('[data-compliance-carousel]').forEach((carousel) => {
