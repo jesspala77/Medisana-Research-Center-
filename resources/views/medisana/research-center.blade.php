@@ -6,6 +6,15 @@
     $medisanaRoute = $isStandaloneDomain ? 'medisana.standalone' : 'medisana.research-center';
     $medisanaUrl = fn (?string $pageName = null, ?string $fragment = null): string => route($medisanaRoute, $pageName ? ['page' => $pageName] : []) . ($fragment ? "#{$fragment}" : '');
     $synnexusPortalUrl = config('medisana.portal_url');
+    // Add a photograph at any of these paths to replace its editorial fallback.
+    $capabilityImages = [
+        'clinic-network' => ['path' => 'images/medisana/capabilities/clinic-network.webp', 'alt' => 'Welcoming clinical reception and patient access area'],
+        'investigator-leadership' => ['path' => 'images/medisana/capabilities/investigator-leadership.webp', 'alt' => 'Investigator reviewing a research plan with a clinical colleague'],
+        'patient-support' => ['path' => 'images/medisana/capabilities/patient-support.webp', 'alt' => 'Care coordinator speaking with a research participant'],
+        'cns-qualified-raters' => ['path' => 'images/medisana/capabilities/cns-qualified-raters.webp', 'alt' => 'Clinician conducting a structured CNS assessment'],
+        'diagnostics-dispensing' => ['path' => 'images/medisana/capabilities/diagnostics-dispensing.webp', 'alt' => 'Clinical diagnostics equipment in a treatment room'],
+        'operational-backbone' => ['path' => 'images/medisana/capabilities/operational-backbone.webp', 'alt' => 'Research operations team reviewing study documentation'],
+    ];
     $pageHeaders = [
         'patients' => [
             'eyebrow' => 'Patients and families',
@@ -972,7 +981,7 @@
             background: var(--surface);
             border: 1px solid rgba(6, 23, 34, 0.08);
             box-shadow: 0 18px 42px rgba(6, 23, 34, 0.06);
-            padding: 24px;
+            overflow: hidden;
             transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
         }
 
@@ -985,10 +994,81 @@
         .capability-card summary {
             cursor: pointer;
             display: grid;
-            gap: 8px;
             list-style: none;
-            padding-right: 40px;
             position: relative;
+        }
+
+        .capability-card summary:focus-visible {
+            outline: 3px solid var(--teal-dark);
+            outline-offset: -3px;
+        }
+
+        .capability-card-media {
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(145deg, #092346, #17445a 62%, #48645d);
+            display: block;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .capability-card:nth-child(3n + 2) .capability-card-media {
+            background: linear-gradient(145deg, #0b2e54, #35545e 68%, #937960);
+        }
+
+        .capability-card:nth-child(3n) .capability-card-media {
+            background: linear-gradient(145deg, #102d42, #32505c 60%, #816e59);
+        }
+
+        .capability-card-media img {
+            display: block;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            width: 100%;
+        }
+
+        .capability-card-media::after {
+            background: linear-gradient(180deg, transparent 48%, rgba(5, 25, 43, 0.28));
+            content: "";
+            inset: 0;
+            pointer-events: none;
+            position: absolute;
+        }
+
+        .capability-card-media-fallback {
+            border: 1px solid rgba(224, 204, 158, 0.28);
+            inset: 16px;
+            position: absolute;
+        }
+
+        .capability-card-media-fallback::before,
+        .capability-card-media-fallback::after {
+            content: "";
+            position: absolute;
+        }
+
+        .capability-card-media-fallback::before {
+            background: rgba(224, 204, 158, 0.65);
+            height: 1px;
+            left: 20px;
+            top: 24px;
+            width: 52px;
+        }
+
+        .capability-card-media-fallback::after {
+            border: 1px solid rgba(224, 204, 158, 0.16);
+            border-radius: 50%;
+            height: 130px;
+            right: -28px;
+            top: -48px;
+            width: 130px;
+        }
+
+        .capability-card-heading {
+            display: grid;
+            gap: 8px;
+            min-height: 108px;
+            padding: 20px 64px 24px 24px;
         }
 
         .capability-card summary::-webkit-details-marker {
@@ -1006,8 +1086,8 @@
             height: 32px;
             justify-content: center;
             position: absolute;
-            right: 0;
-            top: 0;
+            bottom: 24px;
+            right: 24px;
             width: 32px;
         }
 
@@ -1016,11 +1096,11 @@
             content: "-";
         }
 
-        .capability-card[open] span {
+        .capability-card[open] .capability-card-heading > span {
             color: var(--red-dark);
         }
 
-        .capability-card span {
+        .capability-card-heading > span {
             color: var(--teal-dark);
             display: block;
             font-size: 12px;
@@ -1037,7 +1117,7 @@
 
         .capability-card-body {
             border-top: 1px solid rgba(6, 23, 34, 0.08);
-            margin-top: 16px;
+            margin: 0 24px 24px;
             padding-top: 16px;
         }
 
@@ -2998,8 +3078,14 @@
                 <div class="capability-card-grid" aria-label="Expandable site capability areas">
                     <details class="capability-card" data-capability-detail>
                         <summary>
-                            <span>Patient access</span>
-                            <h3>Clinic Network</h3>
+                            <span class="capability-card-media">
+                                @if (is_file(public_path($capabilityImages['clinic-network']['path'])))
+                                    <img src="{{ asset($capabilityImages['clinic-network']['path']) }}" alt="{{ $capabilityImages['clinic-network']['alt'] }}" loading="lazy" decoding="async" width="1600" height="900">
+                                @else
+                                    <span class="capability-card-media-fallback" aria-hidden="true"></span>
+                                @endif
+                            </span>
+                            <div class="capability-card-heading"><span>Patient access</span><h3>Clinic Network</h3></div>
                         </summary>
                         <div class="capability-card-body">
                             <ul>
@@ -3011,8 +3097,14 @@
                     </details>
                     <details class="capability-card" id="investigators" data-capability-detail>
                         <summary>
-                            <span>Oversight</span>
-                            <h3>Investigator Leadership</h3>
+                            <span class="capability-card-media">
+                                @if (is_file(public_path($capabilityImages['investigator-leadership']['path'])))
+                                    <img src="{{ asset($capabilityImages['investigator-leadership']['path']) }}" alt="{{ $capabilityImages['investigator-leadership']['alt'] }}" loading="lazy" decoding="async" width="1600" height="900">
+                                @else
+                                    <span class="capability-card-media-fallback" aria-hidden="true"></span>
+                                @endif
+                            </span>
+                            <div class="capability-card-heading"><span>Oversight</span><h3>Investigator Leadership</h3></div>
                         </summary>
                         <div class="capability-card-body">
                             <ul>
@@ -3025,8 +3117,14 @@
                     </details>
                     <details class="capability-card" data-capability-detail>
                         <summary>
-                            <span>Study support</span>
-                            <h3>Patient Support</h3>
+                            <span class="capability-card-media">
+                                @if (is_file(public_path($capabilityImages['patient-support']['path'])))
+                                    <img src="{{ asset($capabilityImages['patient-support']['path']) }}" alt="{{ $capabilityImages['patient-support']['alt'] }}" loading="lazy" decoding="async" width="1600" height="900">
+                                @else
+                                    <span class="capability-card-media-fallback" aria-hidden="true"></span>
+                                @endif
+                            </span>
+                            <div class="capability-card-heading"><span>Study support</span><h3>Patient Support</h3></div>
                         </summary>
                         <div class="capability-card-body">
                             <ul>
@@ -3038,8 +3136,14 @@
                     </details>
                     <details class="capability-card" data-capability-detail>
                         <summary>
-                            <span>CNS readiness</span>
-                            <h3>CNS &amp; Qualified Raters</h3>
+                            <span class="capability-card-media">
+                                @if (is_file(public_path($capabilityImages['cns-qualified-raters']['path'])))
+                                    <img src="{{ asset($capabilityImages['cns-qualified-raters']['path']) }}" alt="{{ $capabilityImages['cns-qualified-raters']['alt'] }}" loading="lazy" decoding="async" width="1600" height="900">
+                                @else
+                                    <span class="capability-card-media-fallback" aria-hidden="true"></span>
+                                @endif
+                            </span>
+                            <div class="capability-card-heading"><span>CNS readiness</span><h3>CNS &amp; Qualified Raters</h3></div>
                         </summary>
                         <div class="capability-card-body">
                             <ul>
@@ -3051,8 +3155,14 @@
                     </details>
                     <details class="capability-card" data-capability-detail>
                         <summary>
-                            <span>Infrastructure</span>
-                            <h3>Diagnostics &amp; Dispensing</h3>
+                            <span class="capability-card-media">
+                                @if (is_file(public_path($capabilityImages['diagnostics-dispensing']['path'])))
+                                    <img src="{{ asset($capabilityImages['diagnostics-dispensing']['path']) }}" alt="{{ $capabilityImages['diagnostics-dispensing']['alt'] }}" loading="lazy" decoding="async" width="1600" height="900">
+                                @else
+                                    <span class="capability-card-media-fallback" aria-hidden="true"></span>
+                                @endif
+                            </span>
+                            <div class="capability-card-heading"><span>Infrastructure</span><h3>Diagnostics &amp; Dispensing</h3></div>
                         </summary>
                         <div class="capability-card-body">
                             <ul>
@@ -3064,8 +3174,14 @@
                     </details>
                     <details class="capability-card" data-capability-detail>
                         <summary>
-                            <span>Backbone</span>
-                            <h3>Operational Backbone</h3>
+                            <span class="capability-card-media">
+                                @if (is_file(public_path($capabilityImages['operational-backbone']['path'])))
+                                    <img src="{{ asset($capabilityImages['operational-backbone']['path']) }}" alt="{{ $capabilityImages['operational-backbone']['alt'] }}" loading="lazy" decoding="async" width="1600" height="900">
+                                @else
+                                    <span class="capability-card-media-fallback" aria-hidden="true"></span>
+                                @endif
+                            </span>
+                            <div class="capability-card-heading"><span>Backbone</span><h3>Operational Backbone</h3></div>
                         </summary>
                         <div class="capability-card-body">
                             <ul>
