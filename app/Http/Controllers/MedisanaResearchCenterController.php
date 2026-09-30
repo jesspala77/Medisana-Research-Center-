@@ -6,6 +6,14 @@ use Illuminate\Contracts\View\View;
 
 class MedisanaResearchCenterController extends Controller
 {
+    public function spanishPatients(): View
+    {
+        return view('medisana.research-center', [
+            'page' => 'patients',
+            'locale' => 'es',
+        ]);
+    }
+
     public function __invoke(?string $page = null): View
     {
         $allowedPages = ['patients', 'sponsors', 'capabilities', 'readiness', 'careers', 'contact'];

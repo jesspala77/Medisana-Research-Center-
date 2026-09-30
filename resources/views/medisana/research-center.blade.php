@@ -1,19 +1,12 @@
 @php
     $currentPage = $page ?? 'home';
+    $isSpanish = ($locale ?? 'en') === 'es';
     $isHome = $currentPage === 'home';
     $isPage = fn (string $pageName): bool => $currentPage === $pageName;
     $isStandaloneDomain = request()->getHost() === config('medisana.domain');
     $medisanaRoute = $isStandaloneDomain ? 'medisana.standalone' : 'medisana.research-center';
     $medisanaUrl = fn (?string $pageName = null, ?string $fragment = null): string => route($medisanaRoute, $pageName ? ['page' => $pageName] : []) . ($fragment ? "#{$fragment}" : '');
     $synnexusPortalUrl = config('medisana.portal_url');
-    $capabilityImages = [
-        'clinic-network' => ['path' => 'images/medisana/capabilities/clinic-network.jpeg', 'alt' => 'Exterior of Medisana Health Center showing the accessible clinic entrance', 'position' => 'center 49%'],
-        'investigator-leadership' => ['path' => 'images/medisana/capabilities/investigator-leadership.jpeg', 'alt' => 'Medisana clinical workspace supporting investigator leadership', 'position' => 'center 57%'],
-        'patient-support' => ['path' => 'images/medisana/capabilities/patient-support.jpeg', 'alt' => 'Medisana staff support area for participant comfort and coordination', 'position' => 'center 58%'],
-        'cns-qualified-raters' => ['path' => 'images/medisana/capabilities/cns-qualified-raters.jpeg', 'alt' => 'Medisana clinical corridor supporting CNS and qualified rater workflows', 'position' => 'center 54%'],
-        'diagnostics-dispensing' => ['path' => 'images/medisana/capabilities/diagnostics-dispensing.jpeg', 'alt' => 'Clinical diagnostic equipment at Medisana Health Center', 'position' => 'left 56%'],
-        'operational-backbone' => ['path' => 'images/medisana/capabilities/operational-backbone.jpeg', 'alt' => 'Medisana operations office with clinical workflow stations', 'position' => 'center 56%'],
-    ];
     $pageHeaders = [
         'patients' => [
             'eyebrow' => 'Patients and families',
@@ -976,11 +969,107 @@
             grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
+        .capability-gallery {
+            display: grid;
+            gap: 14px;
+            grid-template-columns: 1.18fr 0.82fr 0.82fr;
+        }
+
+        .capability-gallery figure {
+            background: var(--deep);
+            box-shadow: 0 18px 42px rgba(6, 23, 34, 0.10);
+            margin: 0;
+            min-height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .capability-gallery figure:first-child {
+            grid-row: span 2;
+            min-height: 454px;
+        }
+
+        .capability-gallery img {
+            display: block;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            width: 100%;
+        }
+
+        .capability-gallery figure:first-child img {
+            object-position: center;
+        }
+
+        .capability-gallery figcaption {
+            background: linear-gradient(180deg, transparent 12%, rgba(5, 22, 50, 0.88));
+            bottom: 0;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 800;
+            left: 0;
+            letter-spacing: 0.08em;
+            padding: 54px 18px 16px;
+            position: absolute;
+            right: 0;
+            text-transform: uppercase;
+        }
+
+        .capability-gallery figure:hover img {
+            transform: scale(1.035);
+        }
+
+        .capability-gallery-note {
+            align-items: end;
+            background: linear-gradient(145deg, var(--ink), var(--deep));
+            color: #fff;
+            display: flex;
+            min-height: 220px;
+            padding: 24px;
+        }
+
+        .capability-gallery-note p {
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 15px;
+            margin: 0;
+        }
+
+        .capability-gallery-note strong {
+            color: var(--champagne);
+            display: block;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .capability-photo-carousel {
+            border: 1px solid rgba(7, 31, 74, 0.12);
+            box-shadow: var(--premium-shadow);
+            overflow: hidden;
+        }
+
+        .capability-photo-viewport { overflow: hidden; }
+        .capability-photo-track { display: flex; transition: transform 520ms cubic-bezier(.22, .61, .36, 1); }
+        .capability-photo-slide { background: var(--ink); flex: 0 0 100%; margin: 0; min-width: 0; position: relative; }
+        .capability-photo-slide img { aspect-ratio: 16 / 9; display: block; height: 100%; object-fit: cover; object-position: var(--focal, center); width: 100%; }
+        .capability-photo-slide::after { background: linear-gradient(180deg, transparent 55%, rgba(7, 31, 74, .74)); content: ""; inset: 0; pointer-events: none; position: absolute; }
+        .capability-photo-slide figcaption { bottom: 0; color: #fff; font-size: 13px; font-weight: 800; left: 0; letter-spacing: .08em; padding: 22px 26px; position: absolute; text-transform: uppercase; z-index: 1; }
+        .capability-photo-controls { align-items: center; background: var(--ink); display: flex; justify-content: space-between; padding: 13px 18px; }
+        .capability-photo-arrows, .capability-photo-dots { display: flex; gap: 8px; }
+        .capability-photo-button { align-items: center; background: transparent; border: 1px solid rgba(255,255,255,.32); border-radius: 50%; color: #fff; cursor: pointer; display: inline-flex; font-size: 21px; height: 38px; justify-content: center; line-height: 1; width: 38px; }
+        .capability-photo-button:hover { background: var(--red); border-color: var(--red); }
+        .capability-photo-dot { background: rgba(255,255,255,.35); border: 0; border-radius: 999px; cursor: pointer; height: 5px; padding: 0; transition: width .18s ease, background .18s ease; width: 5px; }
+        .capability-photo-dot[aria-current="true"] { background: #fff; width: 22px; }
+        .capability-photo-button:focus-visible, .capability-photo-dot:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+        @media (prefers-reduced-motion: reduce) { .capability-photo-track { transition: none; } }
+
         .capability-card {
             background: var(--surface);
             border: 1px solid rgba(6, 23, 34, 0.08);
             box-shadow: 0 18px 42px rgba(6, 23, 34, 0.06);
-            overflow: hidden;
+            padding: 24px;
             transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
         }
 
@@ -993,81 +1082,10 @@
         .capability-card summary {
             cursor: pointer;
             display: grid;
-            list-style: none;
-            position: relative;
-        }
-
-        .capability-card summary:focus-visible {
-            outline: 3px solid var(--teal-dark);
-            outline-offset: -3px;
-        }
-
-        .capability-card-media {
-            aspect-ratio: 16 / 9;
-            background: linear-gradient(145deg, #092346, #17445a 62%, #48645d);
-            display: block;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .capability-card:nth-child(3n + 2) .capability-card-media {
-            background: linear-gradient(145deg, #0b2e54, #35545e 68%, #937960);
-        }
-
-        .capability-card:nth-child(3n) .capability-card-media {
-            background: linear-gradient(145deg, #102d42, #32505c 60%, #816e59);
-        }
-
-        .capability-card-media img {
-            display: block;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            width: 100%;
-        }
-
-        .capability-card-media::after {
-            background: linear-gradient(180deg, transparent 48%, rgba(5, 25, 43, 0.28));
-            content: "";
-            inset: 0;
-            pointer-events: none;
-            position: absolute;
-        }
-
-        .capability-card-media-fallback {
-            border: 1px solid rgba(224, 204, 158, 0.28);
-            inset: 16px;
-            position: absolute;
-        }
-
-        .capability-card-media-fallback::before,
-        .capability-card-media-fallback::after {
-            content: "";
-            position: absolute;
-        }
-
-        .capability-card-media-fallback::before {
-            background: rgba(224, 204, 158, 0.65);
-            height: 1px;
-            left: 20px;
-            top: 24px;
-            width: 52px;
-        }
-
-        .capability-card-media-fallback::after {
-            border: 1px solid rgba(224, 204, 158, 0.16);
-            border-radius: 50%;
-            height: 130px;
-            right: -28px;
-            top: -48px;
-            width: 130px;
-        }
-
-        .capability-card-heading {
-            display: grid;
             gap: 8px;
-            min-height: 108px;
-            padding: 20px 64px 24px 24px;
+            list-style: none;
+            padding-right: 40px;
+            position: relative;
         }
 
         .capability-card summary::-webkit-details-marker {
@@ -1085,8 +1103,8 @@
             height: 32px;
             justify-content: center;
             position: absolute;
-            bottom: 24px;
-            right: 24px;
+            right: 0;
+            top: 0;
             width: 32px;
         }
 
@@ -1095,11 +1113,11 @@
             content: "-";
         }
 
-        .capability-card[open] .capability-card-heading > span {
+        .capability-card[open] span {
             color: var(--red-dark);
         }
 
-        .capability-card-heading > span {
+        .capability-card span {
             color: var(--teal-dark);
             display: block;
             font-size: 12px;
@@ -1116,7 +1134,7 @@
 
         .capability-card-body {
             border-top: 1px solid rgba(6, 23, 34, 0.08);
-            margin: 0 24px 24px;
+            margin-top: 16px;
             padding-top: 16px;
         }
 
@@ -1134,106 +1152,108 @@
             padding-left: 20px;
         }
 
-        .capability-carousel {
-            border: 1px solid rgba(7, 31, 74, 0.12);
-            box-shadow: var(--premium-shadow);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .capability-carousel-viewport {
-            overflow: hidden;
-        }
-
-        .capability-carousel-track {
-            display: flex;
-            transition: transform 520ms cubic-bezier(.22, .61, .36, 1);
-        }
-
-        .capability-slide {
-            background: var(--surface);
+        .capability-card-media {
             display: grid;
-            flex: 0 0 100%;
-            grid-template-columns: minmax(0, 1.48fr) minmax(280px, .72fr);
-            min-width: 0;
+            gap: 12px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            margin-top: 20px;
         }
 
-        .capability-slide-media {
-            aspect-ratio: 16 / 9;
+        .capability-card-media figure {
             background: var(--ink);
-            display: block;
+            cursor: zoom-in;
+            margin: 0;
             overflow: hidden;
             position: relative;
         }
 
-        .capability-slide-media img {
+        .capability-card-media img {
+            aspect-ratio: 16 / 9;
             display: block;
-            height: 100%;
+            height: auto;
             object-fit: cover;
-            object-position: var(--focal-position, center);
+            object-position: var(--focal, center);
+            transition: transform 420ms cubic-bezier(.22, .61, .36, 1);
             width: 100%;
         }
 
-        .capability-slide-media::after {
-            background: linear-gradient(90deg, transparent 52%, rgba(7, 31, 74, .2)), linear-gradient(180deg, transparent 54%, rgba(7, 31, 74, .32));
-            content: "";
-            inset: 0;
-            pointer-events: none;
-            position: absolute;
+        .capability-card-media figure:hover img {
+            transform: scale(1.025);
         }
 
-        .capability-slide-copy {
-            align-content: center;
-            background: linear-gradient(145deg, #fff 0%, #f4f7fb 100%);
-            border-left: 1px solid rgba(7, 31, 74, .1);
-            display: grid;
-            padding: clamp(26px, 4vw, 56px);
-        }
-
-        .capability-slide-copy .eyebrow { margin: 0 0 11px; }
-        .capability-slide-copy h3 { color: var(--ink); font-size: clamp(25px, 2.3vw, 34px); line-height: 1.08; margin: 0; }
-        .capability-slide-copy ul { color: var(--muted); font-size: 15px; line-height: 1.5; margin: 17px 0 0; padding-left: 19px; }
-        .capability-slide-copy li + li { margin-top: 6px; }
-
-        .capability-carousel-controls {
-            align-items: center;
-            background: rgba(7, 31, 74, .98);
-            display: flex;
-            gap: 14px;
-            justify-content: space-between;
-            padding: 14px 18px;
-        }
-
-        .capability-carousel-buttons { display: flex; gap: 8px; }
-        .capability-carousel-button {
-            align-items: center;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, .34);
-            border-radius: 50%;
+        .capability-card-media figcaption {
+            background: linear-gradient(0deg, rgba(3, 17, 41, .9), rgba(3, 17, 41, 0));
+            bottom: 0;
             color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            left: 0;
+            letter-spacing: .08em;
+            padding: 32px 12px 10px;
+            position: absolute;
+            right: 0;
+            text-transform: uppercase;
+        }
+
+        .media-lightbox[hidden] { display: none; }
+
+        .media-lightbox {
+            align-items: center;
+            background: rgba(3, 17, 41, 0.9);
+            display: flex;
+            inset: 0;
+            justify-content: center;
+            padding: 28px;
+            position: fixed;
+            z-index: 100;
+        }
+
+        .media-lightbox-dialog {
+            max-height: 100%;
+            max-width: min(1180px, 100%);
+            position: relative;
+            width: 100%;
+        }
+
+        .media-lightbox-image {
+            display: block;
+            max-height: calc(100vh - 110px);
+            max-width: 100%;
+            object-fit: contain;
+            width: 100%;
+        }
+
+        .media-lightbox-caption {
+            color: #fff;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: .08em;
+            margin: 12px 54px 0 0;
+            text-transform: uppercase;
+        }
+
+        .media-lightbox-close {
+            align-items: center;
+            background: #fff;
+            border: 0;
+            border-radius: 50%;
+            color: var(--ink);
             cursor: pointer;
             display: inline-flex;
-            font-size: 22px;
-            height: 38px;
+            font-size: 26px;
+            height: 42px;
             justify-content: center;
             line-height: 1;
-            transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
-            width: 38px;
-        }
-        .capability-carousel-button:hover { background: var(--red); border-color: var(--red); transform: translateY(-1px); }
-        .capability-carousel-button:focus-visible, .capability-carousel-dot:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
-        .capability-carousel-dots { display: flex; gap: 7px; }
-        .capability-carousel-dot { background: rgba(255, 255, 255, .36); border: 0; border-radius: 999px; cursor: pointer; height: 5px; padding: 0; transition: background 180ms ease, width 180ms ease; width: 5px; }
-        .capability-carousel-dot[aria-current="true"] { background: #fff; width: 23px; }
-
-        @media (max-width: 720px) {
-            .capability-slide { grid-template-columns: 1fr; }
-            .capability-slide-copy { border-left: 0; border-top: 1px solid rgba(7, 31, 74, .1); padding: 28px 24px 32px; }
-            .capability-slide-media { aspect-ratio: 16 / 10; }
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 42px;
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            .capability-carousel-track { transition: none; }
+        .capability-card-media figure:focus-visible,
+        .media-lightbox-close:focus-visible {
+            outline: 3px solid var(--red);
+            outline-offset: 3px;
         }
 
         .current-studies {
@@ -2845,6 +2865,7 @@
             .compliance-carousel-head,
             .page-hero-grid,
             .site-capability-main,
+            .capability-gallery,
             .capability-card-grid,
             .current-studies,
             .patient-experience,
@@ -2884,6 +2905,16 @@
             .capability-strip {
                 grid-template-columns: 40px minmax(0, 1fr) 40px;
                 margin-top: 24px;
+            }
+
+            .capability-gallery figure,
+            .capability-gallery figure:first-child,
+            .capability-gallery-note {
+                min-height: 300px;
+            }
+
+            .capability-gallery figure:first-child {
+                grid-row: auto;
             }
 
             .capability-pill {
@@ -2939,6 +2970,10 @@
 
             .capability-pill {
                 flex-basis: 100%;
+            }
+
+            .capability-card-media {
+                grid-template-columns: 1fr;
             }
 
             .compliance-badge {
@@ -3176,57 +3211,40 @@
                         </div>
                     </div>
                 </article>
-                <div class="capability-carousel" data-capability-carousel role="region" aria-roledescription="carousel" aria-label="Medisana site capability images">
-                    <div class="capability-carousel-viewport">
-                        <div class="capability-carousel-track" data-capability-track>
+                <div class="capability-photo-carousel" data-capability-photo-carousel role="region" aria-roledescription="carousel" aria-label="Medisana site capability environments">
+                    <div class="capability-photo-viewport">
+                        <div class="capability-photo-track" data-capability-photo-track>
                             @php
-                                $capabilitySlides = [
-                                    ['key' => 'clinic-network', 'eyebrow' => 'Patient access', 'title' => 'Clinic Network', 'items' => ['Miami Springs, Flagler, and Homestead patient access', 'Care-team coordination across established clinic locations', 'Community relationships that support study awareness and follow-up']],
-                                    ['key' => 'investigator-leadership', 'eyebrow' => 'Oversight', 'title' => 'Investigator Leadership', 'items' => ['Pastor Torres, MD: Internal Medicine, General Surgery, Cosmetic Surgery', 'Vladimir A. Guevara Vazquez, MD: Psychiatry and Psychoanalysis', 'Jose Morales, MD: Psychiatry and CNS support', 'Protocol review, delegation, safety awareness, and approved study conduct']],
-                                    ['key' => 'patient-support', 'eyebrow' => 'Study support', 'title' => 'Patient Support', 'items' => ['Transportation coordination when appropriate and study-allowed', 'HHA-supported services when available and approved', 'Visit reminders, navigation, and retention support']],
-                                    ['key' => 'cns-qualified-raters', 'eyebrow' => 'CNS readiness', 'title' => 'CNS & Qualified Raters', 'items' => ['Psychiatry investigator bench for CNS-focused sponsor review', 'Qualified raters for sponsor-approved scales and investigator delegation', 'Brainwave / EEG assessment capability subject to protocol requirements']],
-                                    ['key' => 'diagnostics-dispensing', 'eyebrow' => 'Infrastructure', 'title' => 'Diagnostics & Dispensing', 'items' => ['Ultrasound and EKG diagnostics', 'Onsite pharmacy dispensing capability', 'Temperature-controlled NIST-certified monitoring']],
-                                    ['key' => 'operational-backbone', 'eyebrow' => 'Backbone', 'title' => 'Operational Backbone', 'items' => ['Secure prescreening and protected study workflows', 'Feasibility packets, startup tasks, regulatory files, and budget action items', 'Operational visibility for sponsors, CROs, investigators, and the site team']],
+                                $capabilityPhotos = [
+                                    ['file' => 'capability-clinic-network-16x9.jpg', 'alt' => 'Medisana Health Center clinic entrance and patient access point', 'caption' => 'Clinic network', 'position' => 'center'],
+                                    ['file' => 'medisana-investigator-cns-rater-office-16x9.jpg', 'alt' => 'Medisana investigator and CNS rater office', 'caption' => 'Investigator and CNS rater office', 'position' => 'center 55%'],
+                                    ['file' => 'capability-brainwave-eeg-suite.png', 'alt' => 'Medisana brainwave and EEG assessment suite', 'caption' => 'EEG assessment suite', 'position' => 'center'],
+                                    ['file' => 'medisana-ecg-assessment-suite-branded.png', 'alt' => 'Medisana ECG assessment suite', 'caption' => 'ECG assessment suite', 'position' => 'center'],
+                                    ['file' => 'capability-patient-support-16x9.jpg', 'alt' => 'Medisana participant support space', 'caption' => 'Patient support', 'position' => 'center 55%'],
+                                    ['file' => 'capability-operational-backbone.png', 'alt' => 'Medisana operational coordination workspace', 'caption' => 'Operational backbone', 'position' => 'center'],
                                 ];
                             @endphp
-                            @foreach ($capabilitySlides as $index => $slide)
-                                @php($image = $capabilityImages[$slide['key']])
-                                <article class="capability-slide" data-capability-slide aria-roledescription="slide" aria-label="{{ $index + 1 }} of {{ count($capabilitySlides) }}: {{ $slide['title'] }}" aria-hidden="{{ $index === 0 ? 'false' : 'true' }}">
-                                    <div class="capability-slide-media" style="--focal-position: {{ $image['position'] }};">
-                                        <img src="{{ asset($image['path']) }}" alt="{{ $image['alt'] }}" loading="{{ $index === 0 ? 'eager' : 'lazy' }}" decoding="async" width="1600" height="900">
-                                    </div>
-                                    <div class="capability-slide-copy">
-                                        <p class="eyebrow">{{ $slide['eyebrow'] }}</p>
-                                        <h3>{{ $slide['title'] }}</h3>
-                                        <ul>
-                                            @foreach ($slide['items'] as $item)
-                                                <li>{{ $item }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </article>
+                            @foreach ($capabilityPhotos as $index => $photo)
+                                <figure class="capability-photo-slide" data-capability-photo-slide aria-roledescription="slide" aria-label="{{ $index + 1 }} of {{ count($capabilityPhotos) }}: {{ $photo['caption'] }}" aria-hidden="{{ $index === 0 ? 'false' : 'true' }}" style="--focal: {{ $photo['position'] }};">
+                                    <img src="{{ asset('images/medisana/' . $photo['file']) }}" alt="{{ $photo['alt'] }}" loading="{{ $index === 0 ? 'eager' : 'lazy' }}" decoding="async" width="1664" height="936">
+                                    <figcaption>{{ $photo['caption'] }}</figcaption>
+                                </figure>
                             @endforeach
                         </div>
                     </div>
-                    <div class="capability-carousel-controls">
-                        <div class="capability-carousel-buttons">
-                            <button class="capability-carousel-button" type="button" data-capability-prev aria-label="Previous capability">‹</button>
-                            <button class="capability-carousel-button" type="button" data-capability-next aria-label="Next capability">›</button>
+                    <div class="capability-photo-controls">
+                        <div class="capability-photo-arrows">
+                            <button class="capability-photo-button" type="button" data-capability-photo-prev aria-label="Previous capability photo">‹</button>
+                            <button class="capability-photo-button" type="button" data-capability-photo-next aria-label="Next capability photo">›</button>
                         </div>
-                        <div class="capability-carousel-dots" data-capability-dots aria-label="Choose a site capability"></div>
+                        <div class="capability-photo-dots" data-capability-photo-dots aria-label="Choose a capability photo"></div>
                     </div>
                 </div>
-                <div class="capability-card-grid" hidden>
+                <div class="capability-card-grid" aria-label="Expandable site capability areas">
                     <details class="capability-card" data-capability-detail>
                         <summary>
-                            <span class="capability-card-media">
-                                @if (is_file(public_path($capabilityImages['clinic-network']['path'])))
-                                    <img src="{{ asset($capabilityImages['clinic-network']['path']) }}" alt="{{ $capabilityImages['clinic-network']['alt'] }}" loading="lazy" decoding="async" width="1600" height="900">
-                                @else
-                                    <span class="capability-card-media-fallback" aria-hidden="true"></span>
-                                @endif
-                            </span>
-                            <div class="capability-card-heading"><span>Patient access</span><h3>Clinic Network</h3></div>
+                            <span>Patient access</span>
+                            <h3>Clinic Network</h3>
                         </summary>
                         <div class="capability-card-body">
                             <ul>
@@ -3234,38 +3252,93 @@
                                 <li>Care-team coordination across established clinic locations</li>
                                 <li>Community relationships that support study awareness and follow-up</li>
                             </ul>
+                            <div class="capability-card-media" aria-label="Clinic network environments">
+    <figure>
+        <img
+            src="{{ asset('images/medisana/medisana-flagler-street-frontage-official-logo-cropped.jpg') }}"
+            alt="Medisana Health Center Flagler location exterior at 11200 West Flagler Street"
+            loading="lazy"
+            decoding="async"
+        >
+        <figcaption>Flagler location</figcaption>
+    </figure>
+
+    <figure>
+        <img
+            src="{{ asset('images/medisana/medisana-homestead-street-frontage-official-logo-concept.jpg') }}"
+            alt="Medisana Health Center Homestead location exterior at 33550 South Dixie Highway"
+            loading="lazy"
+            decoding="async"
+        >
+        <figcaption>Homestead location</figcaption>
+    </figure>
+
+    <figure>
+        <img
+            src="{{ asset('images/medisana/medisana-facility-exterior.png') }}"
+            alt="Medisana Health Center Miami Springs location exterior"
+            loading="lazy"
+            decoding="async"
+        >
+        <figcaption>Miami Springs location</figcaption>
+    </figure>
+
+    <figure>
+        <img
+            src="{{ asset('images/medisana/medisana-site-hallway.png') }}"
+            alt="Medisana clinical hallway and assessment rooms"
+            loading="lazy"
+            decoding="async"
+        >
+        <figcaption>Clinical hallway</figcaption>
+    </figure>
+
+    <figure>
+        <img
+            src="{{ asset('images/medisana/capability-reception.png') }}"
+            alt="Medisana reception and patient welcome area"
+            loading="lazy"
+            decoding="async"
+        >
+        <figcaption>Reception</figcaption>
+    </figure>
+
+    <figure>
+        <img
+            src="{{ asset('images/medisana/capability-examination-room.png') }}"
+            alt="Medisana examination room for participant visits"
+            loading="lazy"
+            decoding="async"
+        >
+        <figcaption>Examination room</figcaption>
+    </figure>
+</div>
                         </div>
                     </details>
                     <details class="capability-card" id="investigators" data-capability-detail>
                         <summary>
-                            <span class="capability-card-media">
-                                @if (is_file(public_path($capabilityImages['investigator-leadership']['path'])))
-                                    <img src="{{ asset($capabilityImages['investigator-leadership']['path']) }}" alt="{{ $capabilityImages['investigator-leadership']['alt'] }}" loading="lazy" decoding="async" width="1600" height="900">
-                                @else
-                                    <span class="capability-card-media-fallback" aria-hidden="true"></span>
-                                @endif
-                            </span>
-                            <div class="capability-card-heading"><span>Oversight</span><h3>Investigator Leadership</h3></div>
+                            <span>Oversight</span>
+                            <h3>Investigator Leadership</h3>
                         </summary>
                         <div class="capability-card-body">
                             <ul>
                                 <li>Pastor Torres, MD: Internal Medicine, General Surgery, Cosmetic Surgery</li>
+                                <li>Guido A. Perez, MD: Internal Medicine Principal Investigator experienced in asthma, COPD, Alzheimer's disease, dementia, and migraine clinical trials</li>
                                 <li>Vladimir A. Guevara Vazquez, MD: Psychiatry and Psychoanalysis</li>
                                 <li>Jose Morales, MD: Psychiatry and CNS support</li>
                                 <li>Protocol review, delegation, safety awareness, and approved study conduct</li>
                             </ul>
+                            <div class="capability-card-media" aria-label="Investigator leadership environments">
+                                <figure><img src="{{ asset('images/medisana/medisana-investigator-cns-rater-office-16x9.jpg') }}" alt="Medisana investigator and CNS rater office" loading="lazy" decoding="async" style="--focal: center 55%;"><figcaption>Investigator office</figcaption></figure>
+                                <figure><img src="{{ asset('images/medisana/capability-clinical-conference-room.png') }}" alt="Medisana clinical conference room" loading="lazy" decoding="async"><figcaption>Clinical conference room</figcaption></figure>
+                                <figure><img src="{{ asset('images/medisana/ChatGPT Image Sep 28, 2026, 12_39_25 PM-5.png') }}" alt="Medisana participant gathering and support space" loading="lazy" decoding="async"><figcaption>Team gathering space</figcaption></figure>
+                            </div>
                         </div>
                     </details>
                     <details class="capability-card" data-capability-detail>
                         <summary>
-                            <span class="capability-card-media">
-                                @if (is_file(public_path($capabilityImages['patient-support']['path'])))
-                                    <img src="{{ asset($capabilityImages['patient-support']['path']) }}" alt="{{ $capabilityImages['patient-support']['alt'] }}" loading="lazy" decoding="async" width="1600" height="900">
-                                @else
-                                    <span class="capability-card-media-fallback" aria-hidden="true"></span>
-                                @endif
-                            </span>
-                            <div class="capability-card-heading"><span>Study support</span><h3>Patient Support</h3></div>
+                            <span>Study support</span>
+                            <h3>Patient Support</h3>
                         </summary>
                         <div class="capability-card-body">
                             <ul>
@@ -3273,18 +3346,17 @@
                                 <li>HHA-supported services when available and approved</li>
                                 <li>Visit reminders, navigation, and retention support</li>
                             </ul>
+                            <div class="capability-card-media" aria-label="Patient support environments">
+                                <figure><img src="{{ asset('images/medisana/capability-patient-support-16x9.jpg') }}" alt="Medisana participant support space" loading="lazy" decoding="async" style="--focal: center 55%;"><figcaption>Patient support</figcaption></figure>
+                                <figure><img src="{{ asset('images/medisana/Medisana_Patient_Families_Community.png') }}" alt="Medisana patient, family, and community support setting" loading="lazy" decoding="async"><figcaption>Patient and family support</figcaption></figure>
+                                <figure><img src="{{ asset('images/medisana/wide_professional_recruitment_poster_for_medisana.png') }}" alt="Medisana professional recruitment information display" loading="lazy" decoding="async"><figcaption>Recruitment information</figcaption></figure>
+                            </div>
                         </div>
                     </details>
                     <details class="capability-card" data-capability-detail>
                         <summary>
-                            <span class="capability-card-media">
-                                @if (is_file(public_path($capabilityImages['cns-qualified-raters']['path'])))
-                                    <img src="{{ asset($capabilityImages['cns-qualified-raters']['path']) }}" alt="{{ $capabilityImages['cns-qualified-raters']['alt'] }}" loading="lazy" decoding="async" width="1600" height="900">
-                                @else
-                                    <span class="capability-card-media-fallback" aria-hidden="true"></span>
-                                @endif
-                            </span>
-                            <div class="capability-card-heading"><span>CNS readiness</span><h3>CNS &amp; Qualified Raters</h3></div>
+                            <span>CNS readiness</span>
+                            <h3>CNS &amp; Qualified Raters</h3>
                         </summary>
                         <div class="capability-card-body">
                             <ul>
@@ -3292,44 +3364,54 @@
                                 <li>Qualified raters for sponsor-approved scales and investigator delegation</li>
                                 <li>Brainwave / EEG assessment capability subject to protocol requirements</li>
                             </ul>
+                            <div class="capability-card-media" aria-label="CNS and qualified rater environments">
+                                <figure><img src="{{ asset('images/medisana/capability-brainwave-eeg-suite.png') }}" alt="Medisana brainwave and EEG assessment suite" loading="lazy" decoding="async"><figcaption>EEG assessment suite</figcaption></figure>
+                            </div>
                         </div>
                     </details>
                     <details class="capability-card" data-capability-detail>
                         <summary>
-                            <span class="capability-card-media">
-                                @if (is_file(public_path($capabilityImages['diagnostics-dispensing']['path'])))
-                                    <img src="{{ asset($capabilityImages['diagnostics-dispensing']['path']) }}" alt="{{ $capabilityImages['diagnostics-dispensing']['alt'] }}" loading="lazy" decoding="async" width="1600" height="900">
-                                @else
-                                    <span class="capability-card-media-fallback" aria-hidden="true"></span>
-                                @endif
-                            </span>
-                            <div class="capability-card-heading"><span>Infrastructure</span><h3>Diagnostics &amp; Dispensing</h3></div>
+                            <span>Infrastructure</span>
+                            <h3>Diagnostics &amp; Dispensing</h3>
                         </summary>
                         <div class="capability-card-body">
                             <ul>
-                                <li>Ultrasound and EKG diagnostics</li>
+                                <li>Ultrasound and ECG diagnostics</li>
                                 <li>Onsite pharmacy dispensing capability</li>
-                                <li>Temperature-controlled NIST-certified monitoring</li>
+                                <li>&minus;80&deg;C freezer, refrigerated centrifuge, and 2&ndash;8&deg;C refrigerator</li>
+                                <li>Established dry-ice vendor agreements</li>
+                                <li>Crash cart with emergency medications for cardiac, respiratory, and other emergencies</li>
+                                <li>AED and NIST-certified temperature monitoring</li>
                             </ul>
+                            <div class="capability-card-media" aria-label="Diagnostics and dispensing environments">
+                                <figure><img src="{{ asset('images/medisana/capability-ultrasound-diagnostics.png') }}" alt="Medisana ultrasound diagnostics room" loading="lazy" decoding="async"><figcaption>Ultrasound diagnostics</figcaption></figure>
+                                <figure><img src="{{ asset('images/medisana/medisana-ecg-assessment-suite-branded.png') }}" alt="Medisana ECG assessment suite" loading="lazy" decoding="async"><figcaption>ECG assessment suite</figcaption></figure>
+                                <figure><img src="{{ asset('images/medisana/medisana-laboratory-suite-16x9.jpg') }}" alt="Medisana laboratory suite" loading="lazy" decoding="async"><figcaption>Laboratory suite</figcaption></figure>
+                                <figure><img src="{{ asset('images/medisana/capability-lab-equipment.png') }}" alt="Medisana laboratory equipment and testing area" loading="lazy" decoding="async"><figcaption>Laboratory equipment</figcaption></figure>
+                                <figure><img src="{{ asset('images/medisana/capability-infusion-suite.png') }}" alt="Medisana infusion suite" loading="lazy" decoding="async"><figcaption>Infusion suite</figcaption></figure>
+                                <figure><img src="{{ asset('images/medisana/capability-pharmacy-suite-16x9.jpg') }}" alt="Medisana pharmacy suite" loading="lazy" decoding="async"><figcaption>Pharmacy suite</figcaption></figure>
+                                <figure><img src="{{ asset('images/medisana/medisana-phamacy-hallway-16x9.jpg') }}" alt="Medisana pharmacy hallway" loading="lazy" decoding="async"><figcaption>Pharmacy hallway</figcaption></figure>
+                            </div>
                         </div>
                     </details>
                     <details class="capability-card" data-capability-detail>
                         <summary>
-                            <span class="capability-card-media">
-                                @if (is_file(public_path($capabilityImages['operational-backbone']['path'])))
-                                    <img src="{{ asset($capabilityImages['operational-backbone']['path']) }}" alt="{{ $capabilityImages['operational-backbone']['alt'] }}" loading="lazy" decoding="async" width="1600" height="900">
-                                @else
-                                    <span class="capability-card-media-fallback" aria-hidden="true"></span>
-                                @endif
-                            </span>
-                            <div class="capability-card-heading"><span>Backbone</span><h3>Operational Backbone</h3></div>
+                            <span>Backbone</span>
+                            <h3>Operational Backbone</h3>
                         </summary>
                         <div class="capability-card-body">
                             <ul>
                                 <li>Secure prescreening and protected study workflows</li>
+                                <li>Established and implemented SynNexus SOPs that support consistent, reliable data collection</li>
+                                <li>Dedicated laboratory and data-management personnel supporting timely contractual milestones</li>
                                 <li>Feasibility packets, startup tasks, regulatory files, and budget action items</li>
                                 <li>Operational visibility for sponsors, CROs, investigators, and the site team</li>
                             </ul>
+                            <div class="capability-card-media" aria-label="Operational backbone environments">
+                                <figure><img src="{{ asset('images/medisana/capability-operational-backbone.png') }}" alt="Medisana operational coordination workspace" loading="lazy" decoding="async"><figcaption>Operational backbone</figcaption></figure>
+                                <figure><img src="{{ asset('images/medisana/Medisana_Sponsor_CRO_Operations.png') }}" alt="Medisana sponsor and CRO operations workspace" loading="lazy" decoding="async"><figcaption>Sponsor and CRO operations</figcaption></figure>
+                                <figure><img src="{{ asset('images/medisana/research-center-hero.png') }}" alt="Medisana Research Center reception and clinical workspace" loading="lazy" decoding="async"><figcaption>Research center operations</figcaption></figure>
+                            </div>
                         </div>
                     </details>
                 </div>
@@ -3338,10 +3420,14 @@
         @endif
 
         @if ($isPage('patients'))
+        @if ($isSpanish)
+        @include('medisana.partials.patient-information-es')
+        @else
         <section id="participants" class="band white">
             <div class="wrap section-head">
                 <h2>For patients, families, and community members.</h2>
                 <p>Clinical research participation is explained clearly, reviewed carefully, and handled through approved study processes.</p>
+                <p><a class="button dark" href="{{ route('medisana.patients.es') }}">Ver información para pacientes en español</a></p>
             </div>
             <figure class="wrap section-visual">
                 <img
@@ -3543,6 +3629,7 @@
                 </form>
             </div>
         </section>
+        @endif
         @endif
 
         @if ($isPage('sponsors'))
@@ -3908,10 +3995,10 @@
                         <strong>Flagler</strong>
                         <span>11200 West Flagler Street</span>
                     </a>
-                    <div class="map-pin homestead">
+                    <a class="map-pin homestead" href="https://www.google.com/maps/search/?api=1&query=33550%20South%20Dixie%20Highway%2C%20Suite%20122-130%2C%20Homestead%2C%20FL" target="_blank" rel="noopener">
                         <strong>Homestead</strong>
-                        <span>Clinic access point</span>
-                    </div>
+                        <span>33550 South Dixie Highway, Suite 122-130</span>
+                    </a>
                 </div>
             </div>
         </section>
@@ -3999,12 +4086,111 @@
                 });
             }
 
-            document.querySelectorAll('[data-capability-carousel]').forEach((carousel) => {
-                const track = carousel.querySelector('[data-capability-track]');
-                const slides = Array.from(carousel.querySelectorAll('[data-capability-slide]'));
-                const dots = carousel.querySelector('[data-capability-dots]');
-                const previous = carousel.querySelector('[data-capability-prev]');
-                const next = carousel.querySelector('[data-capability-next]');
+            const capabilityDetails = Array.from(document.querySelectorAll('[data-capability-detail]'));
+            const openCapabilityById = (id) => {
+                if (!id) {
+                    return;
+                }
+
+                const target = document.getElementById(id);
+
+                if (!target || !target.matches('[data-capability-detail]')) {
+                    return;
+                }
+
+                capabilityDetails.forEach((detail) => {
+                    detail.open = detail === target;
+                });
+            };
+
+            capabilityDetails.forEach((detail) => {
+                detail.addEventListener('toggle', () => {
+                    if (!detail.open) {
+                        return;
+                    }
+
+                    capabilityDetails.forEach((otherDetail) => {
+                        if (otherDetail !== detail) {
+                            otherDetail.open = false;
+                        }
+                    });
+                });
+            });
+
+            openCapabilityById(decodeURIComponent(window.location.hash.slice(1)));
+            window.addEventListener('hashchange', () => {
+                openCapabilityById(decodeURIComponent(window.location.hash.slice(1)));
+            });
+
+            const lightbox = document.createElement('div');
+            lightbox.className = 'media-lightbox';
+            lightbox.hidden = true;
+            lightbox.setAttribute('role', 'dialog');
+            lightbox.setAttribute('aria-modal', 'true');
+            lightbox.setAttribute('aria-label', 'Expanded capability image');
+
+            const lightboxDialog = document.createElement('div');
+            lightboxDialog.className = 'media-lightbox-dialog';
+            const lightboxImage = document.createElement('img');
+            lightboxImage.className = 'media-lightbox-image';
+            const lightboxCaption = document.createElement('p');
+            lightboxCaption.className = 'media-lightbox-caption';
+            const lightboxClose = document.createElement('button');
+            lightboxClose.className = 'media-lightbox-close';
+            lightboxClose.type = 'button';
+            lightboxClose.setAttribute('aria-label', 'Close expanded image');
+            lightboxClose.textContent = '×';
+            lightboxDialog.append(lightboxImage, lightboxCaption, lightboxClose);
+            lightbox.appendChild(lightboxDialog);
+            document.body.appendChild(lightbox);
+
+            let lightboxTrigger = null;
+            const closeLightbox = () => {
+                lightbox.hidden = true;
+                lightboxImage.removeAttribute('src');
+                lightboxTrigger?.focus();
+            };
+
+            document.querySelectorAll('.capability-card-media figure').forEach((figure) => {
+                const image = figure.querySelector('img');
+                const caption = figure.querySelector('figcaption')?.textContent?.trim() || image?.alt || 'Capability image';
+                if (!image) return;
+
+                figure.tabIndex = 0;
+                figure.setAttribute('role', 'button');
+                figure.setAttribute('aria-label', `Expand ${caption}`);
+                const openLightbox = () => {
+                    lightboxTrigger = figure;
+                    lightboxImage.src = image.currentSrc || image.src;
+                    lightboxImage.alt = image.alt;
+                    lightboxCaption.textContent = caption;
+                    lightbox.hidden = false;
+                    lightboxClose.focus();
+                };
+
+                figure.addEventListener('click', openLightbox);
+                figure.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        openLightbox();
+                    }
+                });
+            });
+
+            lightboxClose.addEventListener('click', closeLightbox);
+            lightbox.addEventListener('click', (event) => {
+                if (event.target === lightbox) closeLightbox();
+            });
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && !lightbox.hidden) closeLightbox();
+            });
+
+            document.querySelectorAll('[data-capability-photo-carousel]').forEach((carousel) => {
+                const track = carousel.querySelector('[data-capability-photo-track]');
+                const slides = Array.from(carousel.querySelectorAll('[data-capability-photo-slide]'));
+                const dots = carousel.querySelector('[data-capability-photo-dots]');
+                const previous = carousel.querySelector('[data-capability-photo-prev]');
+                const next = carousel.querySelector('[data-capability-photo-next]');
                 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
                 let activeIndex = 0;
                 let intervalId = null;
@@ -4032,12 +4218,13 @@
 
                 slides.forEach((slide, index) => {
                     const dot = document.createElement('button');
-                    dot.className = 'capability-carousel-dot';
+                    dot.className = 'capability-photo-dot';
                     dot.type = 'button';
-                    dot.setAttribute('aria-label', `Show ${slide.querySelector('h3')?.textContent || 'capability'}`);
+                    dot.setAttribute('aria-label', `Show ${slide.querySelector('figcaption')?.textContent || 'capability photo'}`);
                     dot.addEventListener('click', () => { goTo(index); start(); });
                     dots?.appendChild(dot);
                 });
+
                 previous?.addEventListener('click', () => { goTo(activeIndex - 1); start(); });
                 next?.addEventListener('click', () => { goTo(activeIndex + 1); start(); });
                 carousel.addEventListener('mouseenter', stop);
