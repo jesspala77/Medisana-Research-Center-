@@ -1,0 +1,44 @@
+name: Deploy Medisana production
+
+on:
+  push:
+    branches: ["cleanup/medisana-standalone"]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, curl, zip, bcmath, pdo_mysql, gd
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: composer validate --strict
+      - run: composer install --prefer-dist --no-progress --no-interaction
+      - run: npm ci
+      - run: npm run build
+      - run: php artisan route:list --name=medisana
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.MEDISANA_DEPLOY_HOST }}
+          username: ${{ secrets.MEDISANA_DEPLOY_USER }}
+          key: ${{ secrets.MEDISANA_DEPLOY_SSH_KEY }}
+          port: ${{ secrets.MEDISANA_DEPLOY_PORT || 22 }}
+          script: |
+            set -e
+            cd "${{ secrets.MEDISANA_DEPLOY_PATH }}"
+            chmod +x deploy/medisana/deploy-production.sh
+            APP_DIR="${{ secrets.MEDISANA_DEPLOY_PATH }}" GIT_BRANCH=cleanup/medisana-standalone ./deploy/medisana/deploy-production.sh

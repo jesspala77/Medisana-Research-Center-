@@ -3427,6 +3427,7 @@
             <div class="wrap section-head">
                 <h2>For patients, families, and community members.</h2>
                 <p>Clinical research participation is explained clearly, reviewed carefully, and handled through approved study processes.</p>
+                <p><a class="button dark" href="{{ route('medisana.patients.es') }}">Ver información para pacientes en español</a></p>
             </div>
             <figure class="wrap section-visual">
                 <img

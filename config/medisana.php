@@ -5,6 +5,6 @@ return [
 
     'portal_url' => env(
         'SYNNEXUS_PORTAL_URL',
-        rtrim((string) env('APP_URL', 'http://localhost'), '/').'/login'
+        'https://globalsynergiagroup.com/login'
     ),
 ];
