@@ -7,6 +7,25 @@
     $medisanaRoute = $isStandaloneDomain ? 'medisana.standalone' : 'medisana.research-center';
     $medisanaUrl = fn (?string $pageName = null, ?string $fragment = null): string => route($medisanaRoute, $pageName ? ['page' => $pageName] : []) . ($fragment ? "#{$fragment}" : '');
     $synnexusPortalUrl = config('medisana.portal_url');
+    $socialPlatforms = [
+        'instagram' => ['label' => 'Instagram', 'hosts' => ['instagram.com', 'www.instagram.com']],
+        'facebook' => ['label' => 'Facebook', 'hosts' => ['facebook.com', 'www.facebook.com']],
+        'linkedin' => ['label' => 'LinkedIn', 'hosts' => ['linkedin.com', 'www.linkedin.com']],
+    ];
+    $socialLinks = [];
+    foreach ($socialPlatforms as $platform => $details) {
+        $url = trim((string) config("medisana.social_links.{$platform}", ''));
+        $parts = parse_url($url);
+        // Render only configured HTTPS profile URLs on the matching platform.
+        if (filter_var($url, FILTER_VALIDATE_URL)
+            && ($parts['scheme'] ?? '') === 'https'
+            && in_array(strtolower($parts['host'] ?? ''), $details['hosts'], true)
+            && trim($parts['path'] ?? '', '/') !== ''
+            && !isset($parts['user']) && !isset($parts['pass'])
+        ) {
+            $socialLinks[$platform] = ['url' => $url, 'label' => $details['label']];
+        }
+    }
     $pageHeaders = [
         'patients' => [
             'eyebrow' => 'Patients and families',
@@ -2685,6 +2704,34 @@
             justify-content: space-between;
         }
 
+        .social-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .social-links a {
+            align-items: center;
+            border: 1px solid currentColor;
+            border-radius: 50%;
+            display: inline-flex;
+            height: 44px;
+            justify-content: center;
+            width: 44px;
+        }
+
+        .social-links a:hover,
+        .social-links a:focus-visible {
+            color: #fff;
+            outline: 2px solid currentColor;
+            outline-offset: 3px;
+        }
+
+        .social-links svg {
+            height: 20px;
+            width: 20px;
+        }
+
         .lux-reveal {
             opacity: 0;
             transform: translateY(26px);
@@ -4009,6 +4056,26 @@
         <div class="wrap">
             <span>&copy; {{ date('Y') }} Medisana Research Center.</span>
             <span>General information only. Not medical advice or study enrollment confirmation.</span>
+            @if ($socialLinks)
+                <nav class="social-links" aria-label="Medisana Research Center social profiles">
+                    @foreach ($socialLinks as $platform => $social)
+                        <a href="{{ $social['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="Medisana Research Center on {{ $social['label'] }} (opens in a new tab)">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                @if ($platform === 'instagram')
+                                    <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2" />
+                                    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+                                    <circle cx="17.5" cy="6.5" r="1.2" />
+                                @elseif ($platform === 'facebook')
+                                    <path d="M14 22v-9h3l.5-4H14V7c0-1.1.3-2 2-2h2V1.4A24 24 0 0 0 15 1c-3 0-5 1.8-5 5v3H7v4h3v9z" />
+                                @else
+                                    <circle cx="4" cy="4" r="2" />
+                                    <path d="M2 8h4v14H2zM9 8h4v2c.7-1.3 2-2.3 4-2.3 3.5 0 5 2.2 5 6V22h-4v-7.4c0-2-.6-3.2-2.3-3.2-1.8 0-2.7 1.3-2.7 3.2V22H9z" />
+                                @endif
+                            </svg>
+                        </a>
+                    @endforeach
+                </nav>
+            @endif
         </div>
     </footer>
     <script>
